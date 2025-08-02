@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f8fff8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            background-color: white;
+            width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .left-side {
+            background-color: #c0ffc8;
+            width: 40%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+         .circle-upload {
+             width: 200px;
+             height: 200px;
+             border-radius: 50%;
+             background-image: url('zoro.jpg');
+             background-size: cover;
+             background-position: center;
+             border: 3px dashed #251b1b;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             text-align: center;
+             color: #0f1216;
+             cursor: pointer;
+             padding: 20px;
+}
+
+        .circle-upload:hover {
+            background-color: #28343e;
+        }
+
+        .circle-upload input[type="file"] {
+            display: none;
+        }
+
+        .right-side {
+            width: 60%;
+            padding: 40px;
+        }
+
+        .right-side h2 {
+            margin-bottom: 24px;
+            color: #341d1d;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #23a559;
+        }
+
+        .extra-links {
+            text-align: center;
+            margin-top: 14px;
+        }
+
+        .extra-links a {
+            color: #04530d;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .extra-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left-side">
+            <label class="circle-upload">
+                
+            </label>
+        </div>
+        <div class="right-side">
+            <h2>Customer Login</h2>
+            <form>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required />
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required />
+                </div>
+                <button type="submit">Log In</button>
+                <div class="extra-links">
+                    <p><a href="#">Forgot password?</a></p>
+                    <p><a href="#">Create an account</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

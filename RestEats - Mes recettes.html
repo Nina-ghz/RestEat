@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestEats - Mes recettes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: #2d3436;
+        }
+
+
+        header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #636e72;
+            font-size: 1.1rem;
+        }
+
+
+        .ingredients-summary {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .ingredients-preview {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .ingredient-chip {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+
+        .filters-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .diet-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .diet-chip {
+            background: #f1f2f6;
+            color: #2d3436;
+            border: 2px solid transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .diet-chip:hover,
+        .diet-chip.active {
+            background: #74b9ff;
+            color: white;
+            border-color: #0984e3;
+        }
+
+
+        .match-levels {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .match-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .match-btn:hover,
+        .match-btn.active {
+            background: #74b9ff;
+            color: white;
+            border-color: #0984e3;
+            transform: translateY(-2px);
+        }
+
+
+        .recipes-section h2 {
+            color: #2d3436;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .recipe-image {
+            height: 200px;
+            background: linear-gradient(45deg, #fd79a8, #fdcb6e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .recipe-match {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .match-perfect {
+            background: #00b894 !important;
+        }
+
+        .match-good {
+            background: #f39c12 !important;
+        }
+
+        .match-partial {
+            background: #e17055 !important;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe-description {
+            color: #636e72;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .recipe-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stat {
+            text-align: center;
+            color: #636e72;
+        }
+
+        .stat-icon {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .recipe-ingredients {
+            margin-bottom: 1.5rem;
+        }
+
+        .recipe-ingredients h4 {
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .ingredient-tag {
+            background: #f1f2f6;
+            color: #2d3436;
+            padding: 0.3rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .ingredient-tag.available {
+            background: #55efc4;
+            color: #00b894;
+        }
+
+        .ingredient-tag.missing {
+            background: #fab1a0;
+            color: #e17055;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .recipe-btn {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f2f6;
+            color: #2d3436;
+        }
+
+        .recipe-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+
+
+        .recipe-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .recipe-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .recipe-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 1.5rem;
+            padding-left: 3rem;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .recipe-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #74b9ff;
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #636e72;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+
+        @media (max-width: 768px) {
+            .filters-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .match-levels {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recipe-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+            }
+        }
+
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .recipe-card {
+            animation: slideInUp 0.3s ease-out;
+        }
+
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f1f2f6;
+            border-top: 4px solid #74b9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script>
+
+        if ('WebSocket' in window) {
+            (function () {
+                function refreshCSS() {
+                    var sheets = [].slice.call(document.getElementsByTagName("link"));
+                    var head = document.getElementsByTagName("head")[0];
+                    for (var i = 0; i < sheets.length; ++i) {
+                        var elem = sheets[i];
+                        var parent = elem.parentElement || head;
+                        parent.removeChild(elem);
+                        var rel = elem.rel;
+                        if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+                            var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+                            elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+                        }
+                        parent.appendChild(elem);
+                    }
+                }
+                var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+                var address = protocol + window.location.host + window.location.pathname + '/ws';
+                var socket = new WebSocket(address);
+                socket.onmessage = function (msg) {
+                    if (msg.data == 'reload') window.location.reload();
+                    else if (msg.data == 'refreshcss') refreshCSS();
+                };
+                if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+                    console.log('Live reload enabled.');
+                    sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+                }
+            })();
+        }
+        else {
+            console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+        }
+        // ]]>
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                🍽️ RestEats
+            </div>
+            <ul class="nav-menu">
+                <li><a href="resteats-ingredients-page copy.html">Ingredients</a></li>
+                <li><a href="http://127.0.0.1:5500/resteatspage3.html#" class="active">Recipes</a></li>
+            </ul>
+            <div class="user-info">
+                <span>Hello, Zoro !</span>
+                <img src="zoro.jpg" alt="Zoro" class="user-pic">
+            </div>
+        </nav>
+    </header>
+
+
+    <div class="container">
+        <div class="page-title">
+            <h1>Suggested recipes</h1>
+            <p>Discover delicious recipes based on your available ingredients</p>
+        </div>
+
+
+        <div class="ingredients-summary">
+            <h2>Your current inventory</h2>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">Available ingredients</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Expire soon</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">25</span>
+                    <span class="stat-label">Possible recipes</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">8</span>
+                    <span class="stat-label">Perfect recipes</span>
+                </div>
+            </div>
+            <div class="ingredients-preview">
+                <span class="ingredient-chip">🍅 Tomatoes</span>
+                <span class="ingredient-chip">🥕 Carrots</span>
+                <span class="ingredient-chip">🥩 Ground beef</span>
+                <span class="ingredient-chip">🥛 milk</span>
+                <span class="ingredient-chip">🧀 cheese</span>
+                <span class="ingredient-chip">+7 others</span>
+            </div>
+        </div>
+
+
+
+        <div class="recipes-section">
+            <h2>Recommended recipes for you</h2>
+
+            <div class="recipes-grid" id="recipesGrid">
+
+                <div class="recipe-card" data-match="perfect">
+                    <div class="recipe-image">
+                        🍝
+                        <div class="recipe-match match-perfect">100% compatible</div>
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Pasta with Bolognese sauce</h3>
+                        <p class="recipe-description">A delicious traditional Italian dish using available ground beef,
+                            tomatoes and cheese.</p>
+
+                        <div class="recipe-stats">
+                            <div class="stat">
+                                <span class="stat-icon">⏱️</span>
+                                <span>25 min</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">👥</span>
+                                <span>4 pers.</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">⭐</span>
+                                <span>Easy</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-ingredients">
+                            <h4>ingredients (6/6 available)</h4>
+                            <div class="ingredients-list">
+                                <span class="ingredient-tag available">Pasta</span>
+                                <span class="ingredient-tag available">Ground meat</span>
+                                <span class="ingredient-tag available">Tomatoes</span>
+                                <span class="ingredient-tag available">Onions</span>
+                                <span class="ingredient-tag available">Cheese</span>
+                                <span class="ingredient-tag available">Olive oil</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-actions">
+                            <button class="recipe-btn btn-primary" onclick="openRecipeModal(&#39;bolognaise&#39;)">Voir
+                                la </button>
+                            <button class="recipe-btn btn-secondary">💝 Save</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="recipe-card" data-match="good">
+                    <div class="recipe-image">
+                        🥗
+                        <div class="recipe-match match-good">85% compatible</div>
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Grated carrot salad</h3>
+                        <p class="recipe-description">A fresh and crunchy salad, perfect for using up carrots nearing
+                            their expiry.</p>
+
+                        <div class="recipe-stats">
+                            <div class="stat">
+                                <span class="stat-icon">⏱️</span>
+                                <span>10 min</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">👥</span>
+                                <span>2 pers.</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">⭐</span>
+                                <span>Very easy</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-ingredients">
+                            <h4>Ingredients (4/5 available)</h4>
+                            <div class="ingredients-list">
+                                <span class="ingredient-tag available">Carrots</span>
+                                <span class="ingredient-tag available">Lemon</span>
+                                <span class="ingredient-tag available">Olive oil</span>
+                                <span class="ingredient-tag missing">Parsley</span>
+                                <span class="ingredient-tag available">Salt</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-actions">
+                            <button class="recipe-btn btn-primary"
+                                onclick="openRecipeModal(&#39;salade-carottes&#39;)">View the recipe</button>
+                            <button class="recipe-btn btn-secondary">💝 Save</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="recipe-card" data-match="perfect">
+                    <div class="recipe-image">
+                        🥛
+                        <div class="recipe-match match-perfect">100% compatible</div>
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Apple-Banana Smoothie</h3>
+                        <p class="recipe-description">A delicious smoothie to use up your fruits and milk before they
+                            expire tomorrow.</p>
+
+                        <div class="recipe-stats">
+                            <div class="stat">
+                                <span class="stat-icon">⏱️</span>
+                                <span>5 min</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">👥</span>
+                                <span>1 pers.</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">⭐</span>
+                                <span>Very easy</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-ingredients">
+                            <h4>Ingredients (4/4 available)</h4>
+                            <div class="ingredients-list">
+                                <span class="ingredient-tag available">Apples</span>
+                                <span class="ingredient-tag available">Bananas</span>
+                                <span class="ingredient-tag available">Milk</span>
+                                <span class="ingredient-tag available">Honey</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-actions">
+                            <button class="recipe-btn btn-primary" onclick="openRecipeModal(&#39;smoothie&#39;)">View
+                                the recipe</button>
+                            <button class="recipe-btn btn-secondary">💝 Save</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="recipe-card" data-match="partial">
+                    <div class="recipe-image">
+                        🍲
+                        <div class="recipe-match match-partial">40% compatible</div>
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Provençal Ratatouille</h3>
+                        <p class="recipe-description">A traditional French dish made with sun-kissed vegetables. You’re
+                            missing a few ingredients.</p>
+
+                        <div class="recipe-stats">
+                            <div class="stat">
+                                <span class="stat-icon">⏱️</span>
+                                <span>45 min</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">👥</span>
+                                <span>4 pers.</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">⭐</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-ingredients">
+                            <h4>Ingredients (3/7 available)</h4>
+                            <div class="ingredients-list">
+                                <span class="ingredient-tag available">Tomatos</span>
+                                <span class="ingredient-tag available">Onions</span>
+                                <span class="ingredient-tag missing">Courgettes</span>
+                                <span class="ingredient-tag missing">Eggplants</span>
+                                <span class="ingredient-tag missing">Bell peppers</span>
+                                <span class="ingredient-tag available">olive oil</span>
+                                <span class="ingredient-tag missing">Herbs of Provence </span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-actions">
+                            <button class="recipe-btn btn-primary" onclick="openRecipeModal(&#39;ratatouille&#39;)">View
+                                the recipe</button>
+                            <button class="recipe-btn btn-secondary">🛒 Shopping list</button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="recipe-card" data-match="good">
+                    <div class="recipe-image">
+                        🍳
+                        <div class="recipe-match match-perfect">100% compatible</div>
+                    </div>
+                    <div class="recipe-content">
+                        <h3 class="recipe-title">Cheese omelette</h3>
+                        <p class="recipe-description">A fluffy omelette filled with melted cheese.</p>
+
+                        <div class="recipe-stats">
+                            <div class="stat">
+                                <span class="stat-icon">⏱️</span>
+                                <span>5 min</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">👥</span>
+                                <span>1 pers.</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-icon">⭐</span>
+                                <span>Very easy</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-ingredients">
+                            <h4>Ingredients (3/3 available)</h4>
+                            <div class="ingredients-list">
+                                <span class="ingredient-tag available">Eggs</span>
+                                <span class="ingredient-tag available">Cheese</span>
+                                <span class="ingredient-tag available">Olive oil</span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-actions">
+                            <button class="recipe-btn btn-primary" onclick="openRecipeModal(&#39;ratatouille&#39;)">View
+                                the recipe</button>
+                            <button class="recipe-btn btn-secondary">💝 Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

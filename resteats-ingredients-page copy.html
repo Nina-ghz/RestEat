@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestEats - Mes ingrédients</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: #2d3436;
+        }
+
+       
+        header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .user-pic {
+          width: 40px;
+           height: 40px;
+            border-radius: 50%;     
+           object-fit: cover;      
+          border: 2px solid white; 
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            color: #2d3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-title p {
+            color: #636e72;
+            font-size: 1.1rem;
+        }
+
+       
+        .add-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .add-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3436;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #74b9ff;
+            box-shadow: 0 0 0 3px rgba(116, 185, 255, 0.1);
+        }
+
+        .add-btn {
+            background: linear-gradient(45deg, #74b9ff, #0984e3);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.4);
+        }
+
+        
+        .quick-add {
+            margin: 2rem 0;
+        }
+
+        .quick-add h3 {
+            margin-bottom: 1rem;
+            color: #2d3436;
+        }
+
+        .categories {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .category-btn {
+            background: linear-gradient(45deg, #fd79a8, #e84393);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.4);
+        }
+
+        .quick-ingredients {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .quick-ingredients.active {
+            max-height: 300px;
+            margin-top: 1rem;
+        }
+
+        .quick-ingredient {
+            background: #f1f2f6;
+            border: 2px solid transparent;
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .quick-ingredient:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .quick-ingredient.selected {
+            background: #74b9ff;
+            color: white;
+            border-color: #0984e3;
+        }
+
+        .ingredient-icon {
+            font-size: 1.5rem;
+        }
+
+        
+        .ingredients-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            color: #2d3436;
+            font-size: 1.8rem;
+        }
+
+        .filter-search {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 0.5rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            width: 200px;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .ingredients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .ingredient-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ingredient-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .ingredient-card.expired {
+            border-color: #e17055;
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+        }
+
+        .ingredient-card.expiring-soon {
+            border-color: #f39c12;
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+        }
+
+        .ingredient-card.fresh {
+            border-color: #00b894;
+            background: linear-gradient(135deg, #55efc4, #00b894);
+        }
+
+        .ingredient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .ingredient-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3436;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .delete-btn {
+            background: #e17055;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #d63031;
+            transform: scale(1.1);
+        }
+
+        .ingredient-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .expiry-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .status-fresh {
+            background: #00b894;
+            color: white;
+        }
+
+        .status-expiring {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-expired {
+            background: #e17055;
+            color: white;
+        }
+
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+
+        .action-btn {
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(162, 155, 254, 0.4);
+        }
+
+        .primary-btn {
+            background: linear-gradient(45deg, #00b894, #00a085);
+        }
+
+        .primary-btn:hover {
+            box-shadow: 0 10px 25px rgba(0, 184, 148, 0.4);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #636e72;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        
+        @media (max-width: 768px) {
+            .add-form {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .categories {
+                justify-content: center;
+            }
+
+            .filter-search {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ingredient-card {
+            animation: slideIn 0.3s ease-out;
+        }
+
+       
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: linear-gradient(45deg, #00b894, #00a085);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+   
+    <header>
+        <nav>
+            <div class="logo">
+                🍽️ RestEats
+            </div>
+            <div class="user-info">
+                <span>Hello, Zoro !</span>
+             <img src="zoro.jpg" alt="Zoro" class="user-pic">
+
+            </div>
+        </nav>
+    </header>
+
+    
+    <div class="container">
+        <div class="page-title">
+            <h1>My ingredients</h1>
+            <p>Manage your food inventory and don't let anything go bad again!</p>
+        </div>
+
+        
+        <div class="add-section">
+            <h2 style="margin-bottom: 1.5rem; color: #2d3436;">Add an ingredient</h2>
+            <form class="add-form" id="addIngredientForm">
+                <div class="form-group">
+                    <label for="ingredient-name">Ingredient Name</label>
+                    <input type="text" id="ingredient-name" placeholder="Ex: tomatoes, apples...
+" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Quantity</label>
+                    <input type="text" id="quantity" placeholder="Ex: 500g, 3 pieces..." required>
+                </div>
+                <div class="form-group">
+                    <label for="expiry-date">Expiry date</label>
+                    <input type="date" id="expiry-date" required>
+                </div>
+                <button type="submit" class="add-btn">
+                    ➕ Add
+                </button>
+            </form>
+
+         
+            <div class="quick-add">
+                <h3>Ajout rapide par catégorie</h3>
+                <div class="categories">
+                    <button class="category-btn" data-category="legumes">🥕 Vegeteble</button>
+                    <button class="category-btn" data-category="fruits">🍎 Fruits</button>
+                    <button class="category-btn" data-category="viandes">🥩 Meat</button>
+                    <button class="category-btn" data-category="laitiers">🥛 Dairy</button>
+                    <button class="category-btn" data-category="cereales">🌾 Grain</button>
+                </div>
+                
+                <div class="quick-ingredients" id="quickIngredients">
+                   
+                </div>
+            </div>
+        </div>
+
+        <div class="ingredients-section">
+            <div class="section-header">
+                <h2>My Inventory (12 ingredients)</h2>
+                <div class="filter-search">
+                    <input type="text" class="search-box" placeholder="🔍 Research..." id="searchBox">
+                    <select class="filter-select" id="filterSelect">
+                        <option value="all">All</option>
+                        <option value="fresh">Fresh</option>
+                        <option value="expiring">Consume quickly</option>
+                        <option value="expired">expired</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="ingredients-grid" id="ingredientsGrid">
+          
+                <div class="ingredient-card fresh">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🍅 Cherry tomatoes</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>250g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expires:</span>
+                            <span>15/08/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-fresh">Fees (14 days)</span>
+                </div>
+
+                <div class="ingredient-card expiring-soon">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🥛 Semi-skimmed milk</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>1L</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expires:</span>
+                            <span>03/08/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-expiring">comsumption (2 days)</span>
+                </div>
+
+                <div class="ingredient-card fresh">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🥕 Carrots</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>500g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expires:</span>
+                            <span>20/08/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-fresh">Fees (19 days)</span>
+                </div>
+
+                <div class="ingredient-card expired">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🧀 Grated cheese</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>200g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expirs:</span>
+                            <span>30/07/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-expired">Expired (-2 days)</span>
+                </div>
+
+                <div class="ingredient-card fresh">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🍎 Apples</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>6 pieces</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expires:</span>
+                            <span>10/08/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-fresh">Fees (9 days)</span>
+                </div>
+
+                <div class="ingredient-card expiring-soon">
+                    <div class="ingredient-header">
+                        <div class="ingredient-name">🥩 Ground beef</div>
+                        <button class="delete-btn">×</button>
+                    </div>
+                    <div class="ingredient-details">
+                        <div class="detail-item">
+                            <span>Quantity:</span>
+                            <span>400g</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>Expires:</span>
+                            <span>02/08/2025</span>
+                        </div>
+                    </div>
+                    <span class="expiry-status status-expiring">comsumption (1 jour)</span>
+                </div>
+            </div>
+        </div>
+
+       
+        <div class="action-buttons">
+            <a href="RestEats - Mes recettes.html" class="action-btn primary-btn">🍳 See possible recipes</a>
+            <a href="#" class="action-btn">📱 Receive alerts</a>
+           
+        </div>
+    </div>
+
+    
+    <div class="notification" id="notification">
+        Ingredient added successfully! ✅
+    </div>
+
+    <script>
+        
+        const quickIngredientsData = {
+             vegetables: [
+                { name: 'Tomatoes', icon: '🍅' },
+                { name: 'Carrots', icon: '🥕' },
+                { name: 'Zucchini', icon: '🥒' },
+                { name: 'Peppers', icon: '🫑' },
+                { name: 'Onions', icon: '🧅' },
+                { name: 'Potatoes', icon: '🥔' },
+                { name: 'Broccoli', icon: '🥦' },
+                { name: 'Spinach', icon: '🥬' }
+            ],
+            fruits: [
+                { name: 'Apples', icon: '🍎' },
+                { name: 'Bananas', icon: '🍌' },
+                { name: 'Oranges', icon: '🍊' },
+                { name: 'Strawberries', icon: '🍓' },
+                { name: 'Grapes', icon: '🍇' },
+                { name: 'Pears', icon: '🍐' },
+                { name: 'Peaches', icon: '🍑' },
+                { name: 'Lemons', icon: '🍋' }
+            ],
+            meats: [
+                { name: 'Chicken', icon: '🍗' },
+                { name: 'Beef', icon: '🥩' },
+                { name: 'Pork', icon: '🥓' },
+                { name: 'Fish', icon: '🐟' },
+                { name: 'Salmon', icon: '🍣' },
+                { name: 'Ham', icon: '🍖' },
+                { name: 'Eggs', icon: '🥚' },
+                { name: 'Shrimp', icon: '🍤' }
+            ],
+            dairy: [
+                { name: 'Milk', icon: '🥛' },
+                { name: 'Yogurt', icon: '🥛' },
+                { name: 'Cheese', icon: '🧀' },
+                { name: 'Butter', icon: '🧈' },
+                { name: 'Cream', icon: '🥛' },
+                { name: 'Mozzarella', icon: '🧀' },
+                { name: 'Parmesan', icon: '🧀' },
+                { name: 'Cottage Cheese', icon: '🥛' }
+            ],
+            grains: [
+                { name: 'Rice', icon: '🍚' },
+                { name: 'Pasta', icon: '🍝' },
+                { name: 'Bread', icon: '🍞' },
+                { name: 'Flour', icon: '🌾' },
+                { name: 'Oats', icon: '🌾' },
+                { name: 'Quinoa', icon: '🌾' },
+                { name: 'Lentils', icon: '🌾' },
+                { name: 'Beans', icon: '🌾' }
+            ]
+        };
+
+        
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+               
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                
+               
+                btn.classList.add('active');
+                
+                
+                
+                const category = btn.dataset.category;
+                populateQuickIngredients(category);
+            });
+        });
+
+        function populateQuickIngredients(category) {
+            const container = document.getElementById('quickIngredients');
+            const ingredients = quickIngredientsData[category];
+            
+            container.innerHTML = '';
+            
+            ingredients.forEach(ingredient => {
+                const div = document.createElement('div');
+                div.className = 'quick-ingredient';
+                div.innerHTML = `
+                    <span class="ingredient-icon">${ingredient.icon}</span>
+                    <span>${ingredient.name}</span>
+                `;
+                
+                div.addEventListener('click', () => {
+                    div.classList.toggle('selected');
+                    document.getElementById('ingredient-name').value = ingredient.name;
+                });
+                
+                container.appendChild(div);
+            });
+            
+            container.classList.add('active');
+        }
+
+       
+        
+        document.getElementById('addIngredientForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('ingredient-name').value;
+            const quantity = document.getElementById('quantity').value;
+            const expiryDate = document.getElementById('expiry-date').value;
+            
+            if (name && quantity && expiryDate) {
+                addIngredientToGrid(name, quantity, expiryDate);
+                showNotification('Ingrédient ajouté avec succès ! ✅');
+                
+                
+                document.getElementById('addIngredientForm').reset();
+                
+                
+                
+                document.getElementById('quickIngredients').classList.remove('active');
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.quick-ingredient').forEach(qi => qi.classList.remove('selected'));
+            }
+        });
+
+        function addIngredientToGrid(name, quantity, expiryDate) {
+            const grid = document.getElementById('ingredientsGrid');
+            const today = new Date();
+            const expiry = new Date(expiryDate);
+            const daysUntilExpiry = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+            
+            let statusClass, statusText, statusLabel;
+            
+            if (daysUntilExpiry < 0) {
+                statusClass = 'expired';
+                statusText = 'status-expired';
+                statusLabel = `Périmé (${Math.abs(daysUntilExpiry)} jours)`;
+            } else if (daysUntilExpiry <= 3) {
+                statusClass = 'expiring-soon';
+                statusText = 'status-expiring';
+                statusLabel = `À consommer (${daysUntilExpiry} jours)`;
+            } else {
+                statusClass = 'fresh';
+                statusText = 'status-fresh';
+                statusLabel = `Frais (${daysUntilExpiry} jours)`;
+            }
+            
+            const card = document.createElement('div');
+            card.className = `ingredient-card ${statusClass}`;
+            card.innerHTML = `
+                <div class="ingredient-header">
+                    <div class="ingredient-name">🥘 ${name}</div>
+                    <button class="delete-btn">×</button>
+                </div>
+                <div class="ingredient-details">
+                    <div class="detail-item">
+                        <span>Quantité:</span>
+                        <span>${quantity}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span>Expire le:</span>
+                        <span>${expiry.toLocaleDateString('fr-FR')}</span>
+                    </div>
+                </div>
+                <span class="expiry-status ${statusText}">${statusLabel}</span>
+            `;
+            
+            
+            card.querySelector('.delete-btn').addEventListener('click', () => {
+                card.remove();
+                updateInventoryCount();
+                showNotification('Ingrédient supprimé ! 🗑️');
+            });
+            
+            grid.insertBefore(card, grid.firstChild);
+            updateInventoryCount();
+        }
+
+        function updateInventoryCount() {
+            const count = document.querySelectorAll('.ingredient-card').length;
+            document.querySelector('.section-header h2').textContent = `Mon inventaire (${count} ingrédients)`;
+        }
+
+     
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.target.closest('.ingredient-card').remove();
+                updateInventoryCount();
+                showNotification('Ingrédient supprimé ! 🗑️');
+            });
+        });
+
+      
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.ingredient-card');
+            
+            cards.forEach(card => {
+                const name = card.querySelector('.ingredient-name').textContent.toLowerCase();
+                if (name.includes(searchTerm)) {
+                    card.style.display = 
