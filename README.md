@@ -1,2 +1,2 @@
-# RestEat
+# RestEats
 A website
